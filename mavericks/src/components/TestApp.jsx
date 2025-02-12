@@ -7,32 +7,29 @@ import { background } from "../assets";
 
 const TestApp = () => {
   const [predictions, setPredictions] = useState([]);
-  const [responseMessage, setResponseMessage] = useState("");
 
   const handleButtonClick = async (event) => {
     event.preventDefault();
-  
+
     try {
       const fileInput = document.getElementById("imageUpload");
       const file = fileInput.files[0];
-  
+
       const formData = new FormData();
       formData.append("image", file);
-  
+
       const response = await fetch("http://127.0.0.1:5000/submit", {
         method: "POST",
-        body: formData
+        body: formData,
       });
-  
+
       const responseData = await response.json();
       console.log(responseData);
-      setPredictions(responseData.Predictions); // Store predictions
-      setResponseMessage(responseData.img_name);
+      setPredictions(responseData.Predictions);
     } catch (error) {
       console.error("Error posting data:", error);
     }
   };
-  
 
   return (
     <Section className="overflow-hidden" id="test-App">
@@ -55,28 +52,19 @@ const TestApp = () => {
                   }}
                 />
               </div>
-              <div className="flex flex-col md:flex-row">
-                <Button
-                  px="px-3"
-                  className="mb-4 md:mb-0 md:mr-4"
-                >
+              <div className="flex flex-col md:flex-row gap-2">
+                <Button onClick={handleButtonClick} px="px-3">
+                  What is the type of this antenna?
+                </Button>
+                <Button px="px-3" className="mb-4 md:mb-0 md:mr-4">
                   Get AutoLISP Script
                 </Button>
-                <Button onClick={handleButtonClick} px="px-3">What is the type of this antenna?</Button>
               </div>
             </div>
           </form>
-          {/* {responseMessage && <p>Image Name: {responseMessage}</p>} */}
-          {predictions.length > 0 && (
-            <div>
-              <p>This antenna contains:</p>
-              <ul>
-                {predictions.map((prediction, index) => (
-                  <li key={index}>{prediction}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {predictions.map((prediction, index) => (
+            <li key={index}>the image given has a : {prediction.name}</li>
+          ))}
         </div>
       </div>
     </Section>
